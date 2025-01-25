@@ -1,4 +1,4 @@
-import Loan from "../models/loan.models.js";
+import Loan from "../models/loan.model.js";
 
 const applyLoan = async (req, res) => {
   try {
