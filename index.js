@@ -19,7 +19,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use("/api/users",UserRouter)
 app.use("/api/blogs",BlogRouter)
-app.use("/api/loan",loanRouter)
+app.use("/api/loans",loanRouter)
 
 
 

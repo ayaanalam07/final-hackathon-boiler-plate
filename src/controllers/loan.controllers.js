@@ -1,6 +1,7 @@
-import loan from "../models/loan.model.js"
+// loan.controller.js
+import loan from "../models/loan.model.js";
 
-const applyLoan = async(req, res) => {
+const applyLoan = async (req, res) => {
     const { loanName, subcategories, maxLoan, loanPeriod } = req.body;
 
     if (!loanName) return res.status(400).json({ message: "loanName is required" });
@@ -8,18 +9,22 @@ const applyLoan = async(req, res) => {
     if (!maxLoan) return res.status(400).json({ message: "maxLoan is required" });
     if (!loanPeriod) return res.status(400).json({ message: "loanPeriod is required" });
 
-const loanCreate = await loan.create({
-        loanName,
-        subcategories,
-        maxLoan,
-        loanPeriod
-    })
+    try {
+        const loanCreate = await loan.create({
+            loanName,
+            subcategories,
+            maxLoan,
+            loanPeriod,
+        });
 
-    res.status(200).json({
-        message : "Loan created successfully",
-        data: loanCreate,
-    })
+        res.status(200).json({
+            message: "Loan created successfully",
+            data: loanCreate,
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+};
 
-}
 
-export {applyLoan}
+export { applyLoan };
