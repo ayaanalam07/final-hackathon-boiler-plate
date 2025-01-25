@@ -63,8 +63,8 @@ const registerUser = async (req,res)=>{
     if (!cnicRegex.test(CNIC)) {
         return res.status(400).json({ message: "Invalid CNIC format. It should be 13 digits long, e.g., 12345-1234567-1" });
     }
-    const user = await User.findOne({email: email})
-    if(user) return res.status(400).json({message: "email already exists"});
+    const user = await User.findOne({email: email},{CNIC,CNIC})
+    if(user) return res.status(400).json({message: "email and CNIC already exists"});
     const randomPassword = Math.random().toString(36).slice(-8)
 
     // const imageUrl = await uploadImgToCloudinary(req.file.path);
