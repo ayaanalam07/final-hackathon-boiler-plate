@@ -75,7 +75,7 @@ const registerUser = async (req,res)=>{
     })
 
     const info = await transporter.sendMail({
-        from: '"Maddison Foo Koch 👻" <vernie11@ethereal.email>', // sender address
+        from: '"Maddison Foo Koch 👻" <ayaanabaf@email.com>', // sender address
         to: email, // recipient's email
         subject: "Your Account Password ✔", // Subject line
         text: `Your password is: ${randomPassword}`, // plain text body
