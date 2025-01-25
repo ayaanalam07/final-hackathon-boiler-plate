@@ -67,14 +67,14 @@ const registerUser = async (req,res)=>{
     }
     const user = await User.findOne({email: email},{CNIC: CNIC})
     if(user) return res.status(400).json({message: "email and cnic already exists"});
+    const randomPassword = Math.random().toString(36).slice(-8)
 
     // const imageUrl = await uploadImgToCloudinary(req.file.path);
     const userCreate = await User.create({
         username,
         email,
-        // password,
+        password: randomPassword,
         CNIC,
-        role
     })
 
     res.status(200).json({
