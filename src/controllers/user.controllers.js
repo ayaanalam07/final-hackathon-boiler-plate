@@ -21,26 +21,26 @@ const generateRefreshToken = (user)=>{
 }
 
 // cloudinary img 
-const uploadImgToCloudinary = async (filePath) => {
+// const uploadImgToCloudinary = async (filePath) => {
 
-    cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET
-    })
-    console.log("Cloudinary Cloud Name:", process.env.CLOUDINARY_CLOUD_NAME);
-    console.log(process.env.CLOUDINARY_API_KEY);
-    try {
-        const uploadResult = await cloudinary.uploader.upload(filePath, {
-          resource_type: "auto",
-        });
-        fs.unlinkSync(filePath);
-        return uploadResult.secure_url;
-      } catch (error) {
-        fs.unlinkSync(filePath);
-        return null;
-      }
-};
+//     cloudinary.config({
+//         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//         api_key: process.env.CLOUDINARY_API_KEY,
+//         api_secret: process.env.CLOUDINARY_API_SECRET
+//     })
+//     console.log("Cloudinary Cloud Name:", process.env.CLOUDINARY_CLOUD_NAME);
+//     console.log(process.env.CLOUDINARY_API_KEY);
+//     try {
+//         const uploadResult = await cloudinary.uploader.upload(filePath, {
+//           resource_type: "auto",
+//         });
+//         fs.unlinkSync(filePath);
+//         return uploadResult.secure_url;
+//       } catch (error) {
+//         fs.unlinkSync(filePath);
+//         return null;
+//       }
+// };
 
 // nodemailer config
 const transporter = nodemailer.createTransport({
@@ -55,20 +55,26 @@ const transporter = nodemailer.createTransport({
 
 // register
 const registerUser = async (req,res)=>{
-    const {username,email,password} = req.body;
+    const {username,email,CNIC,role} = req.body;
     if(!username) return res.status(400).json({message: "username is required"});
     if(!email) return res.status(400).json({message: "email is required"});
-    if(!password) return res.status(400).json({message: "password is required"});
-    if (!req.file) return res.status(400).json({ message: "Image is required" });
-    const user = await User.findOne({email: email})
-    if(user) return res.status(400).json({message: "email already exists"});
+    // if(!password) return res.status(400).json({message: "password is required"});
+    if(!role) return res.status(400).json({message: "role is required"});
+    if (!CNIC) return res.status(400).json({ message: "CNIC is required" });
+    const cnicRegex = /^[0-9]{5}-?[0-9]{7}-?[0-9]{1}$/;
+    if (!cnicRegex.test(CNIC)) {
+        return res.status(400).json({ message: "Invalid CNIC format. It should be 13 digits long, e.g., 12345-1234567-1" });
+    }
+    const user = await User.findOne({email: email},{CNIC: CNIC})
+    if(user) return res.status(400).json({message: "email and cnic already exists"});
 
-    const imageUrl = await uploadImgToCloudinary(req.file.path);
+    // const imageUrl = await uploadImgToCloudinary(req.file.path);
     const userCreate = await User.create({
         username,
         email,
-        password,
-        image: imageUrl
+        // password,
+        CNIC,
+        role
     })
 
     res.status(200).json({
@@ -80,15 +86,19 @@ const registerUser = async (req,res)=>{
 
 // login
 const loginUser = async (req,res)=>{
-    const {email,password} = req.body;
-    if(!email) return res.status(400).json({message: "email is required"});
-    if(!password) return res.status(400).json({message: "password is required"});
+    const {CNIC} = req.body;
+    if(!CNIC) return res.status(400).json({message: "CNIC is required"});
+    const cnicRegex = /^[0-9]{5}-?[0-9]{7}-?[0-9]{1}$/;
+    if (!cnicRegex.test(CNIC)) {
+        return res.status(400).json({ message: "Invalid CNIC format. It should be 13 digits long, e.g., 12345-1234567-1" });
+    }
+    // if(!password) return res.status(400).json({message: "password is required"});
 
-    const user = await User.findOne({email: email})
+    const user = await User.findOne({CNIC: CNIC})
     if(!user) return res.status(404).json({message: "no user found"});
 
-    const isPassword = await bcrypt.compare(password,user.password);
-    if(!isPassword) return res.status(404).json({message: "incorrect password"});
+    // const isPassword = await bcrypt.compare(password,user.password);
+    // if(!isPassword) return res.status(404).json({message: "incorrect password"});
 
     const accessToken = generateAccessToken(user)
     const refreshToken = generateRefreshToken(user)

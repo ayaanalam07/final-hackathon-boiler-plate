@@ -12,23 +12,34 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: [true, "email is required"] 
     },
-    password : {
+    // password : {
+    //     type: String,
+    //     required: [true, "password is required"]
+    // },  
+    CNIC : {
+        type: Number,
+        unique: true,
+        required: [true, "CNIC is required"]
+    },
+    role: {
         type: String,
-        required: [true, "password is required"]
-    },  
-    image : {
-        type: String,
-        required: [true, "image is required"]
+        enum: ['user', 'admin'], 
+        default: 'user',
+        required: [true, "Role is required"]
     }
 },
 {
     timestamps: true,
 })
 
-userSchema.pre("save",async function(next){
-    if(!this.isModified("password")) return next();
-    this.password = await bcrypt.hash(this.password,10)
-    next()
-})
+// userSchema.pre("save",async function(next){
+//     if(!this.isModified("password")) return next();
+//     this.password = await bcrypt.hash(this.password,10)
+//     next()
+// })
 
 export default mongoose.model("User",userSchema)
+
+
+//message: "Invalid CNIC format. It should be 13 digits long, e.g., 12345-1234567-1"
+ 

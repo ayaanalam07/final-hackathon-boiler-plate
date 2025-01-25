@@ -1,0 +1,93 @@
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+
+// Middleware
+app.use(bodyParser.json());
+
+// Sample loan categories data
+const loanCategories = [
+  {
+    id: 1,
+    name: 'Wedding Loans',
+    subcategories: ['Valima', 'Furniture', 'Valima Food', 'Jahez'],
+    maxLoan: 500000,
+    loanPeriod: 3,
+  },
+  {
+    id: 2,
+    name: 'Home Construction Loans',
+    subcategories: ['Structure', 'Finishing', 'Loan'],
+    maxLoan: 1000000,
+    loanPeriod: 5,
+  },
+  {
+    id: 3,
+    name: 'Business Startup Loans',
+    subcategories: ['Buy Stall', 'Advance Rent for Shop', 'Shop Assets', 'Shop Machinery'],
+    maxLoan: 1000000,
+    loanPeriod: 5,
+  },
+  {
+    id: 4,
+    name: 'Education Loans',
+    subcategories: ['University Fees', 'Child Fees Loan'],
+    maxLoan: 'Based on requirement',
+    loanPeriod: 4,
+  },
+];
+
+// Routes
+
+// Get all loan categories
+app.get('/api/loan-categories', (req, res) => {
+  res.json(loanCategories);
+});
+
+// Get details of a single loan category by ID
+app.get('/api/loan-categories/:id', (req, res) => {
+  const categoryId = parseInt(req.params.id);
+  const category = loanCategories.find((cat) => cat.id === categoryId);
+
+  if (category) {
+    res.json(category);
+  } else {
+    res.status(404).json({ message: 'Loan category not found' });
+  }
+});
+
+// Apply for a loan
+app.post('/api/apply-loan', (req, res) => {
+  const { categoryId, subcategory, amount, applicantName } = req.body;
+
+  const category = loanCategories.find((cat) => cat.id === categoryId);
+
+  if (!category) {
+    return res.status(400).json({ message: 'Invalid loan category' });
+  }
+
+  if (!category.subcategories.includes(subcategory)) {
+    return res.status(400).json({ message: 'Invalid loan subcategory' });
+  }
+
+  if (category.maxLoan !== 'Based on requirement' && amount > category.maxLoan) {
+    return res.status(400).json({
+      message: `Loan amount exceeds the maximum limit of PKR ${category.maxLoan}`,
+    });
+  }
+
+  // Dummy response for successful application
+  res.status(200).json({
+    message: 'Loan application submitted successfully',
+    applicant: applicantName,
+    loanCategory: category.name,
+    loanSubcategory: subcategory,
+    amount,
+  });
+});
+
+// Server setup
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

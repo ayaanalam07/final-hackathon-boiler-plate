@@ -5,6 +5,8 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import UserRouter from "./src/routes/user.routes.js"
 import BlogRouter from "./src/routes/blog.routes.js"
+import loanRouter from "./src/routes/loan.routes.js"
+
 
 
 dotenv.config()
@@ -17,6 +19,8 @@ app.use(express.json())
 app.use(cookieParser())
 app.use("/api/users",UserRouter)
 app.use("/api/blogs",BlogRouter)
+app.use("/api/loan",loanRouter)
+
 
 
 app.get("/", (req, res) => {
