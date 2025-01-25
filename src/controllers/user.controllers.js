@@ -43,14 +43,13 @@ const generateRefreshToken = (user)=>{
 // };
 
 // nodemailer config
+
 const transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    secure: false,
+    service: 'gmail',
     auth: {
-      user: "andrew31@ethereal.email",
-      pass: "HwSd9QbQPpN4E1dVXZ",
-    },
+        user: 'ayaanabaf@gmail.com',
+        pass: 'amwq vihl invy psui'
+    }
   });
 
 // register
@@ -74,6 +73,16 @@ const registerUser = async (req,res)=>{
         password: randomPassword,
         CNIC,
     })
+
+    const info = await transporter.sendMail({
+        from: '"Maddison Foo Koch 👻" <vernie11@ethereal.email>', // sender address
+        to: email, // recipient's email
+        subject: "Your Account Password ✔", // Subject line
+        text: `Your password is: ${randomPassword}`, // plain text body
+        html: `<b>Your password is: ${randomPassword}</b>`, // HTML body
+      });
+  
+      console.log("Password email sent:", info.messageId);
 
     res.status(200).json({
         message : "User created successfully",
@@ -134,23 +143,11 @@ const refreshToken = async(req,res)=>{
     res.json({decoded})
 }
 
-//Send Email
-const sendEmail = async (req, res) => {
-    const info = await transporter.sendMail({
-      from: '"Andrew Nikolaus 👻" <andrew31@ethereal.email>', // sender address
-      to: "mabdullah2037@gmail.com", // list of receivers
-      subject: "Congratulation! Benizar income support (SINDH BANK)✔",
-      text: "Mubarak ho appka benazir income support ma 10 lac cash or 20 tola sona nikla haa. Abhi 2000rs 03221767616 ma bhejain or inaam hasil krain", // plain text body
-      html: "<b>Hello world?</b>", // html body
-    });
-  
-    console.log("Message sent: %s", info.messageId);
-    res.send("email sent");
-  };
 
 
 
-export {registerUser,loginUser,logoutUser,refreshToken,sendEmail}
+
+export {registerUser,loginUser,logoutUser,refreshToken}
 
 
 
