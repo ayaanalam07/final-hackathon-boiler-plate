@@ -14,7 +14,13 @@ dotenv.config()
 
 const app = express()
 
-app.use(cors())
+app.use(
+  cors({
+    origin: 'https://final-hackathon-frontend-five.vercel.app/',
+    credentials: true,
+    exposedHeaders: ["set-cookie"],
+  })
+);
 app.use(express.json())
 app.use(cookieParser())
 app.use("/api/users",UserRouter)
