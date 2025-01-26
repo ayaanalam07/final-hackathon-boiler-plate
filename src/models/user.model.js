@@ -2,11 +2,6 @@ import mongoose from "mongoose"
 import bcrypt from "bcrypt"
 
 const userSchema = new mongoose.Schema({
-    adminPanelId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "adminPanel",
-        required: true
-    },
     username: {
         type: String,
         required: true,
