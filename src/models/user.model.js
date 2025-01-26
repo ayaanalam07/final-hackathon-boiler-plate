@@ -2,21 +2,26 @@ import mongoose from "mongoose"
 import bcrypt from "bcrypt"
 
 const userSchema = new mongoose.Schema({
-    username : {
+    adminPanelId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "adminPanel",
+        required: true
+    },
+    username: {
         type: String,
         required: true,
         unique: true
     },
-    email : {
+    email: {
         type: String,
         required: true,
-        unique: [true, "email is required"] 
+        unique: [true, "email is required"]
     },
-    password : {
+    password: {
         type: String,
         required: [true, "password is required"]
-    },  
-    CNIC : {
+    },
+    CNIC: {
         type: Number,
         unique: true,
         required: [true, "CNIC is required"]
@@ -28,17 +33,16 @@ const userSchema = new mongoose.Schema({
     //     required: [true, "Role is required"]
     // }
 },
-{
-    timestamps: true,
-})
+    {
+        timestamps: true,
+    })
 
-userSchema.pre("save",async function(next){
-    if(!this.isModified("password")) return next();
-    this.password = await bcrypt.hash(this.password,10)
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) return next();
+    this.password = await bcrypt.hash(this.password, 10)
     next()
 })
 
-export default mongoose.model("User",userSchema)
+export default mongoose.model("User", userSchema)
 
 
- 

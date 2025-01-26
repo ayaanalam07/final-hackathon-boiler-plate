@@ -3,9 +3,11 @@ import dotenv from "dotenv";
 import connectDB from './src/db/index.js'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
+import bodyParser  from 'body-parser';
 import UserRouter from "./src/routes/user.routes.js"
 import BlogRouter from "./src/routes/blog.routes.js"
 import loanRouter from "./src/routes/loan.routes.js"
+import adminPanel from "./src/routes/adminPanel.routes.js"
 
 
 
@@ -22,10 +24,13 @@ app.use(
   })
 );
 app.use(express.json())
+app.use(bodyParser.json());
 app.use(cookieParser())
 app.use("/api/users",UserRouter)
 app.use("/api/blogs",BlogRouter)
 app.use("/api/loan",loanRouter)
+app.use("/api/adminpanel", adminPanel);
+
 
 
 
